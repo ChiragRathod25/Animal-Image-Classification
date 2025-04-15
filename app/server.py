@@ -9,7 +9,7 @@ app = Flask(__name__, template_folder='templates')
 
 IMG_SIZE = 128
 
-# ---- Load Model & Label Encoder ----
+# Load Model & Label Encoder 
 model = tf.keras.models.load_model('model/cnn_model.h5')
 with open('model/label_encoder.pkl', 'rb') as f:
     le = pickle.load(f)

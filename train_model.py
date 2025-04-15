@@ -10,7 +10,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 import pickle
 
-# ---- Step 1: Load Dataset ----
+# Load Dataset
 IMG_SIZE = 128
 DATASET_DIR = 'dataset'
 CSV_PATH = os.path.join(DATASET_DIR, 'labels.csv')
@@ -18,15 +18,15 @@ CSV_PATH = os.path.join(DATASET_DIR, 'labels.csv')
 df = pd.read_csv(CSV_PATH)
 df['image_path'] = df['image_name'].apply(lambda x: os.path.join(DATASET_DIR, 'images', x))
 
-# ---- Step 2: Encode Labels ----
+# Encode Labels
 le = LabelEncoder()
 df['label_encoded'] = le.fit_transform(df['category'])
 num_classes = len(le.classes_)
 
-# ---- Step 3: Train/Test Split ----
+# Train/Test Split
 train_df, test_df = train_test_split(df, test_size=0.2, stratify=df['label_encoded'], random_state=42)
 
-# ---- Step 4: Load Images ----
+# Load Images 
 def load_images(paths):
     images = []
     for path in tqdm(paths):
@@ -44,7 +44,7 @@ y_test = test_df['label_encoded'].values[:len(X_test)]
 y_train_cat = to_categorical(y_train, num_classes)
 y_test_cat = to_categorical(y_test, num_classes)
 
-# ---- Step 5: Build CNN ----
+# Build CNN 
 model = Sequential([
     Conv2D(32, (3, 3), activation='relu', input_shape=(IMG_SIZE, IMG_SIZE, 3)),
     MaxPooling2D(2, 2),
@@ -60,10 +60,10 @@ model = Sequential([
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# ---- Step 6: Train ----
-model.fit(X_train, y_train_cat, validation_data=(X_test, y_test_cat), epochs=10, batch_size=32)
+# Train 
+model.fit(X_train, y_train_cat, validation_data=(X_test, y_test_cat), epochs=20, batch_size=32)
 
-# ---- Step 7: Save Model + Encoder ----
+# Save Model + Encoder
 model.save('model/cnn_model.h5')
 
 with open('model/label_encoder.pkl', 'wb') as f:
